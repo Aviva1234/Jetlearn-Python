@@ -2,11 +2,11 @@ import pgzrun
 import random
 
 WIDTH = 1210
-HEIGHT = 908
+HEIGHT = 800
 
 final_level = 5
 current_level = 1
-items = ["bottle", "plastic-bag", "plastic-bottle", "potato-chips", "paper-bag"]
+items = ["bottle", "plastic-bag", "plastic-bottle", "potato-chips"]
 game = True
 gameComplete = False
 actors = []
@@ -38,7 +38,7 @@ def on_mouse_down(pos):
     global actors, current_level, final_level, animations, gameComplete
     for actor in actors:
         if actor.image == "paper-bag":
-            if actor.y > HEIGHT - 100:
+            if actor.y > HEIGHT - 150:
                 actors.remove(actor)
         if actor.collidepoint(pos):
             if actor.image == "paper-bag":
@@ -55,18 +55,23 @@ def on_mouse_down(pos):
                         current_level += 1
                         actors = []
                         animations = []
+def selectPictures(cr):
+    global actors, current_level, items
+    images = ["paper-bag"]
+    for i in range(cr):
+        img = random.choice(items)
+        images.append(img)
+    return images
 
 def make_actors():
     global actors, current_level, items
-    pb = Actor("paper-bag", (random.randint(50, WIDTH-50), 0))
-    actors.append(pb)
-    for i in range(current_level):
-        img = random.choice(items)
-        gap = WIDTH // (current_level + 1)
+    selected_images = selectPictures(current_level)
+    for img in selected_images:
+        gap = WIDTH // (len(selected_images) + 1)
         item = Actor(img)
-        item.x = (i + 1) * gap
+        item.x = (selected_images.index(img) + 1) * gap
         item.y = 0
         actors.append(item)
-    
+    random.shuffle(actors)
 
 pgzrun.go()
